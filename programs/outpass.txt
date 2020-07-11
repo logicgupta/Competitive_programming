@@ -1,0 +1,185 @@
+/**
+    public static final String Url_Send="https://juetoutpass.000webhostapp.com/outpass/send_Data.php";
+    public static final String Url_Update="https://juetoutpass.000webhostapp.com/outpass/update_Student_Data.php";
+    public static final String Url_Select="https://juetoutpass.000webhostapp.com/outpass/get_Student_Data.php";
+    public static final String Url_Delete="https://juetoutpass.000webhostapp.com/outpass/delete_Student_Data.php";
+    */
+
+    public static final String Url_Send="http://192.168.18.37/outpass/send_data.php";
+    public static final String Url_Update="http://192.168.18.37/outpass/update_Student_Data.php";
+    public static final String Url_Select="http://192.168.18.37/outpass/get_Student_Data.php";
+    public static final String Url_Delete="http://192.168.18.37/outpass/delete_Student_Data.php";
+
+ public  void insertUser() {
+
+        final String enroll;
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        final String token = preferences.getString("regId", null);
+        enroll = usernameEditText.getText().toString();
+        Log.e("Login Activity  ","App Server"+enroll+token);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST
+                , Url_Send, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e("Login Activity",response);
+
+                try {
+                    JSONObject jsonObject=new JSONObject(response);
+                    String error=jsonObject.getString("error");
+                    String message=jsonObject.getString("message");
+                    Log.e(TAG,"Message"+message);
+                    if(message.equals("Successfully Inserted")){
+                        updateUser();
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Login Activity",error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("enroll", enroll);
+                params.put("tokenSt", token);
+                return params;
+
+
+            }
+        };
+        RequestQueue requestQueue= Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
+
+    public void updateUser(){
+        final String enroll;
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        final String token = preferences.getString("regId", null);
+        enroll = usernameEditText.getText().toString();
+
+        StringRequest stringRequest=new StringRequest(StringRequest.Method.POST
+                , Url_Update, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "on DAta got from server: "+response );
+                response_Select=response;
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "onErrorResponse: getting the token  "+error.toString() );
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map=new HashMap <String,String>();
+                map.put("enroll",enroll);
+                map.put("tokenSt",token);
+                return map;
+
+            }
+        };
+        RequestQueue requestQueue= Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+
+    }
+
+
+    public void SelectUser(){
+        final String enroll;
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        final String token = preferences.getString("regId", null);
+        enroll = usernameEditText.getText().toString();
+
+        StringRequest stringRequest=new StringRequest(StringRequest.Method.POST
+                , Url_Select, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "on DAta got from server: "+response );
+                response_Select=response;
+                try {
+                    JSONObject jsonObject=new JSONObject(response_Select);
+                    String message=jsonObject.getString("message");
+                    String fetch_RegId=jsonObject.getString("tokenSt");
+                    if(message.equals("Valid Data")){
+                        if(fetch_RegId.equals(token)){
+                            Log.e(TAG,"Not new User");
+                        }
+                        else {
+                            updateUser();
+                        }
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "onErrorResponse: getting the token  "+error.toString() );
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map=new HashMap <String,String>();
+                map.put("enroll",enroll);
+                map.put("tokenSt",token);
+                return map;
+
+            }
+        };
+        RequestQueue requestQueue= Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+
+    }
+
+    public void DeleteUser(){
+        final String enroll;
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
+        final String token = preferences.getString("regId", null);
+        enroll = usernameEditText.getText().toString();
+
+        StringRequest stringRequest=new StringRequest(StringRequest.Method.POST
+                , Url_Delete, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "on DAta got from server: "+response );
+                response_Select=response;
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "onErrorResponse: getting the token  "+error.toString() );
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> map=new HashMap <String,String>();
+                map.put("enroll",enroll);
+                map.put("tokenSt",token);
+                return map;
+
+            }
+        };
+        RequestQueue requestQueue= Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+
+    }

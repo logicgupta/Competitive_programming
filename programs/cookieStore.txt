@@ -1,0 +1,6 @@
+
+        /*ClearableCookieJar cookieJar =
+                new PersistentCookieJar(new SetCookieCache(),
+                        new SharedPrefsCookiePersistor(ClassifyApplication.getContext()));
+
+         */
